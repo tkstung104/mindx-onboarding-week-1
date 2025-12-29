@@ -71,7 +71,9 @@ Desktop.ini
 docker-compose.override.yml
 
 # Kubernetes secrets (nếu có file secret chứa thông tin nhạy cảm)
-# k8s/*/secret.yaml  # Uncomment nếu secret.yaml chứa thông tin nhạy cảm
+# Note: secret.yaml đã bị push, nên giữ lại để deploy
+# Nhưng nên rotate secret và update file với secret mới
+# k8s/**/secret.yaml
 
 # TypeScript
 *.tsbuildinfo
