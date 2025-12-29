@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: mindx-frontend
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: mindx-frontend
+  template:
+    metadata:
+      labels:
+        app: mindx-frontend
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: frontend-container
+        image: mindxtunght104.azurecr.io/mindx-onboarding-frontend:latest 
+        ports:
+        - containerPort: 8080 # Port of Nginx in container

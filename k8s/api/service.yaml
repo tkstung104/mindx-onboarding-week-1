@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service # This name will be used by Frontend to call API internally
+spec:
+  selector:
+    app: mindx-api # Must match the label in Deployment above
+  ports:
+    - protocol: TCP
+      port: 3000       # Port that Service accepts
+      targetPort: 3000 # Actual port of Pod
+  type: ClusterIP # Only allows internal access within Cluster
