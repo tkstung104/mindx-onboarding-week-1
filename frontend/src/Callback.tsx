@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from './api';
+import ReactGA from 'react-ga4';
 
 function Callback() {
   const navigate = useNavigate();
@@ -60,6 +61,16 @@ function Callback() {
       console.log('📥 Response status:', response.status);
 
       if (response.data.success && response.data.user) {
+        // Track login success
+        try {
+          ReactGA.event({
+            category: "Auth",
+            action: "Login Success",
+          });
+        } catch (error) {
+          console.warn('⚠️ Failed to send GA event:', error);
+        } 
+
         // Save user info to sessionStorage
         sessionStorage.setItem('user', JSON.stringify(response.data.user));
         sessionStorage.setItem('idToken', response.data.idToken || '');
@@ -79,6 +90,17 @@ function Callback() {
       }
 
     } catch (error: any) {
+      // Track login failure
+      try {
+        ReactGA.event({
+          category: "Auth",
+          action: "Login Failed",
+          label: error.message
+        });
+      } catch (gaError) {
+        console.warn('⚠️ Failed to send GA event:', gaError);
+      } 
+      
       console.error('❌ Error:', error);
       showError('Error exchanging code for token: ' + (error.response?.data?.message || error.message));
     }

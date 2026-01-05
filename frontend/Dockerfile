@@ -9,6 +9,11 @@ RUN npm install
 
 # Copy code and build React application
 COPY . .
+
+ENV VITE_APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=8b9dca8a-8b0f-4361-8e03-7c609223e752;IngestionEndpoint=https://southeastasia-1.in.applicationinsights.azure.com/;LiveEndpoint=https://southeastasia.livediagnostics.monitor.azure.com/;ApplicationId=b1134463-e6ff-4a51-936a-7b95d76096fe"
+
+ENV VITE_GA_ID="G-KT6ZZVYX2Y"
+
 RUN npm run build
 
 # --- STAGE 2: Production stage (Use Nginx to serve static files) ---

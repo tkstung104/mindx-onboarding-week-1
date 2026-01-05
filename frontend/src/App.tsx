@@ -1,6 +1,69 @@
 import { useState, useEffect } from 'react';
 import api from './api';
 import './App.css';
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
+import ReactGA from 'react-ga4';
+
+// Initialize App Insights
+const appInsights = new ApplicationInsights({
+  config: {
+    connectionString: import.meta.env.VITE_APPLICATIONINSIGHTS_CONNECTION_STRING,
+  }
+});
+
+// QUAN TRỌNG: Phải thêm telemetry initializer TRƯỚC loadAppInsights()
+// Để filter out các requests đến Google Analytics ngay từ đầu
+appInsights.addTelemetryInitializer((envelope) => {
+  // Kiểm tra nếu là dependency telemetry (outgoing HTTP request)
+  const name = envelope.name || '';
+  const baseData = envelope.baseData as any;
+  
+  // Xác định dependency telemetry
+  if (name.includes('Dependency') || baseData?.type === 'Dependency' || baseData?.baseType === 'RemoteDependencyData') {
+    // Lấy target/url của request
+    const target = baseData?.target || baseData?.name || baseData?.url || '';
+    
+    // Loại trừ tất cả requests đến Google Analytics domains
+    if (target && (
+      target.includes('google-analytics.com') ||
+      target.includes('googletagmanager.com') ||
+      target.includes('googleapis.com') ||
+      target.includes('analytics.google.com') ||
+      target.includes('doubleclick.net') ||
+      target.includes('google.com/analytics')
+    )) {
+      return false; // Không gửi telemetry này lên Azure
+    }
+  }
+  
+  return true; // Gửi các telemetry khác bình thường
+});
+
+appInsights.loadAppInsights();
+appInsights.trackPageView(); // Follow the page view
+
+
+// Initialize Google Analytics 4
+const GA_ID = import.meta.env.VITE_GA_ID;
+if (GA_ID) {
+  console.log('✅ Google Analytics initialized with ID:', GA_ID);
+  try {
+    ReactGA.initialize(GA_ID, {
+      // Test mode trong development (không gửi request thật)
+      testMode: import.meta.env.DEV,
+      // Gửi pageview tự động
+      gtagOptions: {
+        send_page_view: false // Tắt auto pageview, sẽ gửi thủ công
+      }
+    });
+  } catch (error) {
+    console.error('❌ Error initializing Google Analytics:', error);
+  }
+} else {
+  console.error('❌ Google Analytics is not initialized');
+}
+
+
 
 interface OpenIdConfig {
   issuer: string;
@@ -29,6 +92,13 @@ function App() {
   useEffect(() => {
     init();
     checkLoggedInUser();
+    
+    // Send pageview with error handling
+    try {
+      ReactGA.send("pageview");
+    } catch (error) {
+      console.warn('⚠️ Failed to send GA pageview:', error);
+    }
   }, []);
 
   async function init() {
@@ -63,6 +133,19 @@ function App() {
   }
 
   async function handleLogin() {
+    // Track the event for 2 analytics platforms
+    appInsights.trackEvent({ name: 'UserStartedLogin' }); //App Insights
+    
+    try {
+      ReactGA.event({
+        category: "User",
+        action: "Started Login",
+        label: "MindX OIDC"
+      });
+    } catch (error) {
+      console.warn('⚠️ Failed to send GA event:', error);
+    }
+
     if (!openIdConfig) {
       setError('OpenID configuration not loaded yet');
       return;
@@ -102,6 +185,18 @@ function App() {
   }
 
   function handleLogout() {
+    // Track the event for 2 analytics platforms
+    appInsights.trackEvent({ name: 'UserLoggedOut' }); //App Insights
+    
+    try {
+      ReactGA.event({
+        category: "User",
+        action: "Logged Out",
+      });
+    } catch (error) {
+      console.warn('⚠️ Failed to send GA event:', error);
+    }
+
     // Remove user info and token
     sessionStorage.removeItem('user');
     sessionStorage.removeItem('idToken');
