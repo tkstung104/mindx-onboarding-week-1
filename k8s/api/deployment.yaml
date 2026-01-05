@@ -36,6 +36,11 @@ spec:
             secretKeyRef:
               name: api-secrets
               key: MINDX_CLIENT_SECRET
+        - name: APPLICATIONINSIGHTS_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: APPLICATIONINSIGHTS_CONNECTION_STRING
         # Health check configuration
         livenessProbe:
           httpGet:
