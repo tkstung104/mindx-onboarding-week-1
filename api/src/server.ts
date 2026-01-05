@@ -1,3 +1,18 @@
+import * as appInsights from 'applicationinsights';
+
+// Setup App Insights with environment variable
+if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
+    appInsights.setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
+        .setAutoDependencyCorrelation(true)
+        .setAutoCollectRequests(true)
+        .setAutoCollectPerformance(true, true)
+        .setAutoCollectExceptions(true)
+        .setAutoCollectDependencies(true)
+        .setAutoCollectConsole(true)
+        .setUseDiskRetryCaching(true)
+        .start();
+}
+
 import express from 'express';
 import { setupMiddleware } from './middleware';
 import { setupRoutes } from './routes';
