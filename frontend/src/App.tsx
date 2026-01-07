@@ -11,19 +11,19 @@ const appInsights = new ApplicationInsights({
   }
 });
 
-// QUAN TRỌNG: Phải thêm telemetry initializer TRƯỚC loadAppInsights()
-// Để filter out các requests đến Google Analytics ngay từ đầu
+// Must add telemetry initializer BEFORE loadAppInsights()
+// To filter out requests to Google Analytics from the beginning
 appInsights.addTelemetryInitializer((envelope) => {
-  // Kiểm tra nếu là dependency telemetry (outgoing HTTP request)
+  // Check if it is dependency telemetry (outgoing HTTP request)
   const name = envelope.name || '';
   const baseData = envelope.baseData as any;
   
-  // Xác định dependency telemetry
+  // Identify dependency telemetry
   if (name.includes('Dependency') || baseData?.type === 'Dependency' || baseData?.baseType === 'RemoteDependencyData') {
-    // Lấy target/url của request
+    // Get the target/url of the request
     const target = baseData?.target || baseData?.name || baseData?.url || '';
     
-    // Loại trừ tất cả requests đến Google Analytics domains
+    // Exclude all requests to Google Analytics domains
     if (target && (
       target.includes('google-analytics.com') ||
       target.includes('googletagmanager.com') ||
@@ -32,15 +32,15 @@ appInsights.addTelemetryInitializer((envelope) => {
       target.includes('doubleclick.net') ||
       target.includes('google.com/analytics')
     )) {
-      return false; // Không gửi telemetry này lên Azure
+      return false; // Do not send this telemetry to Azure
     }
   }
   
-  return true; // Gửi các telemetry khác bình thường
+  return true; // Send all other telemetry as usual
 });
 
 appInsights.loadAppInsights();
-appInsights.trackPageView(); // Follow the page view
+appInsights.trackPageView(); // Track the page view
 
 
 // Initialize Google Analytics 4
@@ -49,11 +49,11 @@ if (GA_ID) {
   console.log('✅ Google Analytics initialized with ID:', GA_ID);
   try {
     ReactGA.initialize(GA_ID, {
-      // Test mode trong development (không gửi request thật)
+      // Test mode in development (do not send real requests)
       testMode: import.meta.env.DEV,
-      // Gửi pageview tự động
+      // Send pageview automatically
       gtagOptions: {
-        send_page_view: false // Tắt auto pageview, sẽ gửi thủ công
+        send_page_view: false 
       }
     });
   } catch (error) {
