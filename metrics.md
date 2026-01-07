@@ -4,6 +4,12 @@ Guide on how to access and interpret metrics from Azure App Insights and Google 
 
 ## 📊 Azure App Insights
 
+### Steps to establish App Insight connection
+1. Access Dashboard, choose **Application Insights** and create.
+2. In backend, install *applicationinsights* library and configure the parameters at the top of entire code.
+3. In frontend, install *@microsoft/applicationinsights-web* library and Initialize App Insights and attach trackEvent to each activity (e.g login, logout, ...)
+4. After deploy, access investigate (in the app insights web) to view the details.
+
 ### Access
 1. Log in to [Azure Portal](https://portal.azure.com)
 2. Find **Application Insights** resource
@@ -42,6 +48,11 @@ requests
 ```
 
 ## 📈 Google Analytics
+
+### Steps to establish Google Analytics connection
+1. Create **Google Analytics** in https://analytics.google.com and get **Google Analytics ID**
+2. Install *react-ga4* library and configure frontend
+3. Add **ReactGA.send** or **ReactGA.event** for each activity, event 
 
 ### Access
 1. Go to [Google Analytics](https://analytics.google.com)
