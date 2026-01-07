@@ -131,7 +131,12 @@ Summary:
 mindx-onboarding/
 ├── api/                    # Backend API
 │   ├── src/
-│   │   └── server.ts       # Express server with OpenID Connect
+│   │   ├── server.ts       # Express server entry point
+│   │   ├── auth.ts         # OpenID Connect authentication
+│   │   ├── config.ts       # Configuration management
+│   │   ├── middleware.ts   # Express middleware
+│   │   ├── routes.ts       # API routes
+│   │   └── types.ts        # TypeScript types
 │   ├── Dockerfile          # Multi-stage Dockerfile
 │   ├── package.json
 │   └── tsconfig.json
@@ -161,6 +166,7 @@ mindx-onboarding/
 ├── README.md               # This file
 ├── documentation.md        # Detailed setup, deployment, auth flow
 ├── architecture.md         # System architecture
+├── metrics.md              # Metrics & monitoring guide
 └── overview.md             # Acceptance criteria checklist
 ```
 
@@ -191,8 +197,9 @@ Full details about:
 - **Setup**: Installation and local running
 - **Deployment**: Deploy to Azure Cloud
 - **Authentication Flow**: Detailed OpenID Connect flow
+- **Metrics & Monitoring**: Azure App Insights and Google Analytics
 
-👉 See [Documentation](./documentation.md)
+👉 See [Documentation](./documentation.md) | [Metrics Guide](./metrics.md)
 
 ## 📝 Scripts
 
