@@ -46,8 +46,8 @@ cat > .env << EOF
 NODE_ENV=development
 PORT=3000
 FRONTEND_URL=http://localhost:5173
-MINDX_CLIENT_ID=
-MINDX_CLIENT_SECRET=
+MINDX_CLIENT_ID=mindx-onboarding
+MINDX_CLIENT_SECRET= <your-secret>
 EOF
 
 # Run development server
